@@ -22,21 +22,9 @@ async def send_message(message: str) -> AsyncIterable[str]:
         callbacks=[callback],
     )
 
-    async def wrap_done(fn: Awaitable, event: asyncio.Event):
-        """Wrap an awaitable with a event to signal when it's done or an exception is raised."""
-        try:
-            await fn
-        except Exception as e:
-            # TODO: handle exception
-            print(f"Caught exception: {e}")
-        finally:
-            # Signal the aiter to stop.
-            event.set()
-
     # Begin a task that runs in the background.
-    task = asyncio.create_task(wrap_done(
-        model.agenerate(messages=[[HumanMessage(content=message)]]),
-        callback.done),
+    task = asyncio.create_task(
+        model.agenerate(messages=[[HumanMessage(content=message)]])
     )
 
     async for token in callback.aiter():
