@@ -1,24 +1,21 @@
-import os
 import asyncio
-from typing import AsyncIterable, Awaitable
+from typing import AsyncIterable
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from langchain.callbacks import AsyncIteratorCallbackHandler
-from langchain.chat_models.openai import ChatOpenAI
+from langchain.chat_models.ollama import ChatOllama
 from langchain.schema import HumanMessage
 
 app = FastAPI()
-os.environ["OPENAI_API_KEY"] = ""
 
 class Message(BaseModel):
     content: str
 
 async def send_message(message: str) -> AsyncIterable[str]:
     callback = AsyncIteratorCallbackHandler()
-    model = ChatOpenAI(
-        streaming=True,
-        verbose=True,
+    model = ChatOllama(
+        model="mistral",
         callbacks=[callback],
     )
 
