@@ -35,6 +35,7 @@ async def send_message(messages: List[List[BaseMessage]]) -> AsyncIterable[str]:
     model = ChatOllama(
         model="mistral",
         callbacks=[callback],
+        stop= ["<|endoftext|>", "User:", "Assistant:", "System:"],
     )
 
     # Begin a task that runs in the background.
