@@ -5,7 +5,9 @@
     import hljs from "highlight.js";
     import "highlight.js/styles/github-dark-dimmed.css";
 
-    const { messages, handleSubmit, input } = useChat();
+    const { messages, handleSubmit, input } = useChat({
+        api: "http://127.0.0.1:8000/api/chat",
+    });
 
     let chatArea: Element;
     const scrollToBottom = async (node: Element) => {
