@@ -1,12 +1,24 @@
 <script lang="ts">
-    import { useChat } from "ai/svelte";
+    import { useChat, type Message } from "ai/svelte";
     import { Marked } from "marked";
     import { markedHighlight } from "marked-highlight";
     import hljs from "highlight.js";
     import "highlight.js/styles/github-dark-dimmed.css";
+    import type { PageData } from "./$types";
+    export let data: PageData;
+
+    const initialMessages: Message[] = [];
+    data.messages.forEach((msg) => {
+        type role = "system" | "user" | "assistant" | "function" | "data";
+        initialMessages.push({
+            id: msg.id.toString(),
+            content: msg.content,
+            role: msg.role as role,
+        });
+    });
 
     const { messages, handleSubmit, input } = useChat({
-        api: "http://127.0.0.1:8000/api/chat",
+        initialMessages,
     });
 
     let chatArea: Element;
@@ -35,12 +47,16 @@
             <li class="p-2">Getting Started</li>
         </ul>
     </section>
-    <section class="flex flex-col h-screen justify-end container max-w-4xl mx-auto p-4">
+    <section
+        class="flex flex-col h-screen justify-end container max-w-4xl mx-auto p-4"
+    >
         <ul class="overflow-auto" bind:this={chatArea}>
             {#each $messages as message}
                 <li>
                     {#if message.role === "user"}
-                        <div class="bg-zinc-800 text-white p-2 my-2 rounded text-sm">
+                        <div
+                            class="bg-zinc-800 text-white p-2 my-2 rounded text-sm"
+                        >
                             {@html marked.parse(message.content)}
                         </div>
                     {:else if message.role === "assistant"}
