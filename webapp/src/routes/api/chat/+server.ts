@@ -1,11 +1,34 @@
 import { LangChainStream, type Message, StreamingTextResponse } from "ai";
 import type { RequestHandler } from "./$types";
 import { ChatOllama } from "langchain/chat_models/ollama";
-import { AIMessage, HumanMessage } from "langchain/schema";
+import { AIMessage, BaseMessage, HumanMessage } from "langchain/schema";
+import prisma from "$lib/prisma";
 
 export const POST = (async ({ request }) => {
-  const { messages }: { messages: Message[] } = await request.json();
+  const reqJson = await request.json();
+  const { messages }: { messages: Message[] } = reqJson;
+  const lastMessage = messages.at(-1);
+  let conversationId = parseInt(reqJson.conversationId);
   const { stream, handlers } = LangChainStream();
+
+  if (!conversationId) {
+    const conversation = await prisma.conversation.create({
+      data: {
+        label: lastMessage?.content || "New Chat",
+      },
+    });
+    conversationId = conversation.id;
+  }
+
+  if (lastMessage?.role === "user") {
+    await prisma.message.create({
+      data: {
+        role: lastMessage.role,
+        content: lastMessage.content.toString(),
+        conversationId,
+      },
+    });
+  }
 
   const model = new ChatOllama({
     model: "mistral",
@@ -19,7 +42,17 @@ export const POST = (async ({ request }) => {
     ),
     {},
     [handlers],
-  ).catch(console.error);
+  ).catch(console.error).then(async (msg: void | BaseMessage) => {
+    if (msg) {
+      await prisma.message.create({
+        data: {
+          role: "assistant",
+          content: msg.content.toString(),
+          conversationId,
+        },
+      });
+    }
+  });
 
   return new StreamingTextResponse(stream);
 }) satisfies RequestHandler;
