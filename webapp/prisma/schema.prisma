@@ -10,9 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Conversation {
+  id        Int       @id @default(autoincrement())
+  label     String
+  createdAt DateTime  @default(now())
+  Message   Message[]
+}
+
 model Message {
-  id        Int      @id @default(autoincrement())
-  role      String
-  content   String
-  createdAt DateTime @default(now())
+  id             Int          @id @default(autoincrement())
+  role           String
+  content        String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId Int
+  createdAt      DateTime     @default(now())
 }

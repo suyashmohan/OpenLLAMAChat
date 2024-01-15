@@ -5,15 +5,27 @@ import { AIMessage, BaseMessage, HumanMessage } from "langchain/schema";
 import prisma from "$lib/prisma";
 
 export const POST = (async ({ request }) => {
-  const { messages }: { messages: Message[] } = await request.json();
+  const reqJson = await request.json();
+  const { messages }: { messages: Message[] } = reqJson;
+  const lastMessage = messages.at(-1);
+  let conversationId = parseInt(reqJson.conversationId);
   const { stream, handlers } = LangChainStream();
 
-  const lastMessage = messages.at(-1);
+  if (!conversationId) {
+    const conversation = await prisma.conversation.create({
+      data: {
+        label: lastMessage?.content || "New Chat",
+      },
+    });
+    conversationId = conversation.id;
+  }
+
   if (lastMessage?.role === "user") {
     await prisma.message.create({
       data: {
         role: lastMessage.role,
         content: lastMessage.content.toString(),
+        conversationId,
       },
     });
   }
@@ -36,6 +48,7 @@ export const POST = (async ({ request }) => {
         data: {
           role: "assistant",
           content: msg.content.toString(),
+          conversationId,
         },
       });
     }
