@@ -11,7 +11,8 @@
 				"dbaeumer.vscode-eslint",
 				"mtxr.sqltools",
 				"mtxr.sqltools-driver-pg",
-				"svelte.svelte-vscode"
+				"svelte.svelte-vscode",
+				"Prisma.prisma"
 			]
 		}
 	}
