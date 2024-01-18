@@ -2,7 +2,7 @@ import prisma from "$lib/prisma";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ params }) => {
-  const conversationId = parseInt(params.id);
+  const conversationId = params.id;
   let messages;
   if (conversationId) {
     messages = await prisma.message.findMany({

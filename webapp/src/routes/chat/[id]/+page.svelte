@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { useChat, type Message } from "ai/svelte";
     import { Marked } from "marked";
     import { markedHighlight } from "marked-highlight";
@@ -9,8 +10,9 @@
 
     const initialMessages: Message[] = [];
     const conversationId = data.conversationId;
+    let form: HTMLFormElement;
 
-    if (data.messages) {
+    if (data.messages && data.messages.length > 1) {
         data.messages.forEach((msg) => {
             type role = "system" | "user" | "assistant" | "function" | "data";
             initialMessages.push({
@@ -26,6 +28,17 @@
         body: {
             conversationId,
         },
+    });
+
+    onMount(() => {
+        if (
+            data.messages &&
+            data.messages.length === 1 &&
+            data.messages.at(0)?.role == "user"
+        ) {
+            input.set(data.messages.at(0)?.content || "");
+            form.dispatchEvent(new Event("submit"));
+        }
     });
 
     let chatArea: Element;
@@ -95,7 +108,11 @@
         <div
             class="container max-w-3xl mx-auto border-t border-gray-300 mt-2 pt-2"
         >
-            <form on:submit={handleSubmit} class="flex flex-col md:flex-row">
+            <form
+                on:submit={handleSubmit}
+                bind:this={form}
+                class="flex flex-col md:flex-row"
+            >
                 <input
                     bind:value={$input}
                     class="flex-grow border border-gray-800 rounded py-1 px-3 md:mr-2"

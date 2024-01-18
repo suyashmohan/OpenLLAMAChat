@@ -8,19 +8,10 @@ export const POST = (async ({ request }) => {
   const reqJson = await request.json();
   const { messages }: { messages: Message[] } = reqJson;
   const lastMessage = messages.at(-1);
-  let conversationId = parseInt(reqJson.conversationId);
+  const conversationId = reqJson.conversationId;
   const { stream, handlers } = LangChainStream();
 
-  if (!conversationId) {
-    const conversation = await prisma.conversation.create({
-      data: {
-        label: lastMessage?.content || "New Chat",
-      },
-    });
-    conversationId = conversation.id;
-  }
-
-  if (lastMessage?.role === "user") {
+  if (lastMessage?.role === "user" && messages.length > 1) {
     await prisma.message.create({
       data: {
         role: lastMessage.role,
