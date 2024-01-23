@@ -60,22 +60,20 @@
     );
 </script>
 
-<div class="flex flex-row bg-gray-50">
-    <section class="w-72 bg-gray-900 text-white md:block hidden">
-        <div class="m-2 p-2 text-md">OpenLLAMAChat</div>
-        <ul class="text-sm">
+<div class="flex flex-row bg-stone-100 text-cyan-900">
+    <section class="w-72 bg-stone-200 md:block hidden">
+        <div class="m-2 p-2">OpenLLAMAChat</div>
+        <ul class="">
             <a data-sveltekit-reload href="/chat/new"
                 ><li
-                    class="m-2 p-2 border text-center hover:bg-gray-100 hover:text-gray-800"
+                    class="m-2 px-2 py-1 bg-stone-300 text-center hover:bg-stone-100"
                 >
                     New Chat
                 </li></a
             >
             {#each data.conversations as conversation}
                 <a data-sveltekit-reload href="/chat/{conversation.id}"
-                    ><li
-                        class="m-2 p-2 rounded-md hover:bg-gray-100 hover:text-gray-800"
-                    >
+                    ><li class="m-2 px-2 py-1 rounded-md hover:bg-stone-100">
                         {conversation.label}
                     </li></a
                 >
@@ -87,26 +85,19 @@
             {#each $messages as message}
                 <li>
                     {#if message.role === "user"}
-                        <div
-                            class="max-w-3xl mx-auto bg-gray-300 p-2 my-2 rounded text-sm"
-                        >
+                        <div class="max-w-3xl mx-auto bg-stone-200 p-2 my-2">
                             {@html marked.parse(message.content)}
                         </div>
                     {:else if message.role === "assistant"}
-                        <div class="max-w-3xl mx-auto prose prose-graye">
+                        <div class="max-w-3xl mx-auto prose prose-stone">
                             {@html marked.parse(message.content)}
                         </div>
                     {/if}
                 </li>
             {/each}
-            {#if $messages.length === 0}
-                <li class="text-sm text-gray-600 max-w-3xl mx-auto">
-                    To get started enter your prompt below
-                </li>
-            {/if}
         </ul>
         <div
-            class="container max-w-3xl mx-auto border-t border-gray-300 mt-2 pt-2"
+            class="container max-w-3xl mx-auto border-t border-stone-300 mt-2 pt-2"
         >
             <form
                 on:submit={handleSubmit}
@@ -115,12 +106,12 @@
             >
                 <input
                     bind:value={$input}
-                    class="flex-grow border border-gray-800 rounded py-1 px-3 md:mr-2"
+                    class="flex-grow border border-stone-300 rounded py-1 px-3 md:mr-2"
                     placeholder="Enter your prompt here"
                 />
                 <button
                     type="submit"
-                    class="md:w-48 bg-gray-800 text-white rounded my-2 md:my-0 py-1 px-3"
+                    class="md:w-24 bg-stone-300 hover:bg-stone-200 rounded my-2 md:my-0 py-1 px-3"
                     >Send</button
                 >
             </form>
