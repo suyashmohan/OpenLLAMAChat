@@ -3,7 +3,11 @@ import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async () => {
-  const conversations = await prisma.conversation.findMany();
+  const conversations = await prisma.conversation.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
 
   return { conversations };
 }) satisfies PageServerLoad;

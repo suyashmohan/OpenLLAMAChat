@@ -15,7 +15,11 @@ export const load = (async ({ params }) => {
     });
   }
 
-  const conversations = await prisma.conversation.findMany();
+  const conversations = await prisma.conversation.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
   return { messages, conversations, conversationId };
 }) satisfies PageServerLoad;

@@ -63,7 +63,7 @@
 <div class="flex flex-row bg-stone-100 text-cyan-900">
     <section class="w-72 bg-stone-200 md:block hidden">
         <div class="m-2 p-2">OpenLLAMAChat</div>
-        <ul class="">
+        <ul class="text-sm">
             <a data-sveltekit-reload href="/chat/new"
                 ><li
                     class="m-2 px-2 py-1 bg-stone-300 text-center hover:bg-stone-100"
@@ -74,7 +74,9 @@
             {#each data.conversations as conversation}
                 <a data-sveltekit-reload href="/chat/{conversation.id}"
                     ><li class="m-2 px-2 py-1 rounded-md hover:bg-stone-100">
-                        {conversation.label}
+                        {conversation.label.length > 60
+                            ? `${conversation.label.substring(0, 60)}...`
+                            : conversation.label}
                     </li></a
                 >
             {/each}
