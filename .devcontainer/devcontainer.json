@@ -12,10 +12,12 @@
 				"mtxr.sqltools",
 				"mtxr.sqltools-driver-pg",
 				"svelte.svelte-vscode",
-				"Prisma.prisma"
+				"Prisma.prisma",
+				"bradlc.vscode-tailwindcss"
 			]
 		}
-	}
+	},
+	"initializeCommand": "cd webapp && pnpm i"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

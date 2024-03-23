@@ -6,6 +6,11 @@
     import hljs from "highlight.js";
     import "highlight.js/styles/github-dark-dimmed.css";
     import type { PageData } from "./$types";
+    import {
+        Sidebar,
+        SidebarItem,
+        SidebarButton,
+    } from "$lib/components/ui/Sidebar";
     export let data: PageData;
 
     const initialMessages: Message[] = [];
@@ -52,7 +57,7 @@
     const marked = new Marked(
         markedHighlight({
             langPrefix: "hljs language-",
-            highlight(code, lang, info) {
+            highlight(code, lang) {
                 const language = hljs.getLanguage(lang) ? lang : "plaintext";
                 return hljs.highlight(code, { language }).value;
             },
@@ -61,27 +66,23 @@
 </script>
 
 <div class="flex flex-row bg-stone-100 text-cyan-900">
-    <section class="w-72 bg-stone-200 md:block hidden">
-        <div class="m-2 p-2">OpenLLAMAChat</div>
-        <ul class="text-sm">
-            <a data-sveltekit-reload href="/chat/new"
-                ><li
-                    class="m-2 px-2 py-1 bg-stone-300 text-center hover:bg-stone-100"
+    <Sidebar>
+        <a data-sveltekit-reload href="/chat/new">
+            <SidebarButton>New Chat</SidebarButton>
+        </a>
+
+        {#each data.conversations as conversation}
+            <a data-sveltekit-reload href="/chat/{conversation.id}"
+                ><SidebarItem
+                    isActive={conversationId === conversation.id ? true : false}
                 >
-                    New Chat
-                </li></a
+                    {conversation.label.length > 60
+                        ? conversation.label.substring(0, 60)
+                        : conversation.label}
+                </SidebarItem></a
             >
-            {#each data.conversations as conversation}
-                <a data-sveltekit-reload href="/chat/{conversation.id}"
-                    ><li class="m-2 px-2 py-1 rounded-md hover:bg-stone-100">
-                        {conversation.label.length > 60
-                            ? `${conversation.label.substring(0, 60)}...`
-                            : conversation.label}
-                    </li></a
-                >
-            {/each}
-        </ul>
-    </section>
+        {/each}
+    </Sidebar>
     <section class="flex flex-col h-screen justify-end container mx-auto p-4">
         <ul class="overflow-auto" bind:this={chatArea}>
             {#each $messages as message}
